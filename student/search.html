@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Teacher</title>
+  <link rel="stylesheet" href="student.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* Slide-in form styles */
+    .slide-form-container {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 400px;
+      height: 100%;
+      background: white;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .slide-form-container.active {
+      transform: translateX(0);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      z-index: 999;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: red;
+      float: right;
+      cursor: pointer;
+    }
+
+    .book-btn,
+    .send-msg-btn {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .book-btn:hover,
+    .send-msg-btn:hover {
+      background-color: #22c55e;
+    }
+
+    .booking-slideup {
+      position: fixed;
+      bottom: -100%;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 20px;
+      border-top: 2px solid #ccc;
+      transition: bottom 0.4s ease;
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .booking-slideup.open {
+      bottom: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 40px 20px 40px 50px;">
+      <h2 style="margin: 0;">Book Appointment</h2>
+      <a href="/student/student.html"
+        style="background: #007bff; color: white; padding: 8px 12px; border-radius: 5px; text-decoration: none;">← Back
+        to Dashboard</a>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Enter teacher name or subject..." />
+      <button id="searchBtn"><i class="fas fa-search"></i> Search</button>
+    </div>
+
+    <div id="teacherResults" class="results-box">
+      <!-- Search results appear here -->
+    </div>
+  </div>
+
+  <!-- Slide-in form -->
+  <div id="overlay" class="overlay"></div>
+  <div id="slideForm" class="slide-form-container">
+    <button id="closeFormBtn" class="close-btn">×</button>
+    <form id="bookingForm" class="booking-form">
+      <h3>Student Details</h3>
+
+      <label>Name:</label>
+      <input type="text" id="studentName" required />
+
+      <label>Email:</label>
+      <input type="email" id="studentEmail" required />
+
+      <label>Select Date:</label>
+      <input type="date" id="appointmentDate" required />
+
+      <label>Select Slot:</label>
+      <select id="slotSelect" required>
+        <option value="">-- Choose a slot --</option>
+      </select>
+
+      <label for="message">Message (optional):</label>
+      <textarea id="message" rows="3" placeholder="Write a message..."></textarea>
+
+      <button type="submit" class="book-btn">Confirm Booking</button>
+    </form>
+  </div>
+  <!-- Send Message Popup -->
+  <div id="messagePopup" class="slide-form-container">
+    <button id="closeMessageBtn" class="close-btn">×</button>
+    <form id="messageForm" class="booking-form">
+      <h3>Send a Message</h3>
+
+      <label>Your Name:</label>
+      <input type="text" id="msgSenderName" required />
+
+      <label>Your Email:</label>
+      <input type="email" id="msgSenderEmail" required />
+
+      <label>Message:</label>
+      <textarea id="msgContent" rows="5" placeholder="Write your message..." required></textarea>
+     <button id="sendMessageBtn" class="send-msg-btn">Send Message</button>
+    </form>
+  </div>
+
+
+  <script type="module" src="/student/student.js"></script>
+  <script type="module" src="/student/msg.js"></script>
+  <script type="module" src="/student/book.js"></script>
+  <script>
+    const overlay = document.getElementById("overlay");
+    const slideForm = document.getElementById("slideForm");
+    const closeFormBtn = document.getElementById("closeFormBtn");
+
+    // Event delegation: handle future dynamic buttons
+    document.getElementById("teacherResults").addEventListener("click", (e) => {
+      if (e.target.classList.contains("open-form")) {
+        slideForm.classList.add("active");
+        overlay.classList.add("active");
+      }
+    });
+
+    closeFormBtn.addEventListener("click", () => {
+      slideForm.classList.remove("active");
+      overlay.classList.remove("active");
+    });
+
+    overlay.addEventListener("click", () => {
+      slideForm.classList.remove("active");
+      overlay.classList.remove("active");
+    });
+  </script>
+</body>
+
+</html>

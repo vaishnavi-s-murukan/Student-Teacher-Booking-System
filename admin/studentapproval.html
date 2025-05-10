@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 20px;">
+        <button onclick="window.location.href='admin.html'"
+            style="background-color: #6c63ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            Back to Dashboard
+        </button>
+        <button id="logoutBtn">Logout</button>
+    </div>
+    <!-- . Approve/Reject Students -->
+    <section>
+        <h2>Student Approval List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="studentList">
+                <!-- filled by JS -->
+            </tbody>
+        </table>
+    </section>
+    <script type="module" src="admin.js"></script>
+</body>
+
+</html>

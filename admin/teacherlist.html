@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 20px;">
+        <button onclick="window.location.href='admin.html'"
+            style="background-color: #6c63ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            Back to Dashboard
+        </button>
+        <button id="logoutBtn">Logout</button>
+    </div>
+    <!-- . Manage Teachers -->
+    <section>
+        <h2>Teacher List</h2>
+        <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th> <!-- added -->
+                <th>Department</th>
+                <th>Subject</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="teachersList">
+              <!-- filled by JS -->
+            </tbody>
+          </table>          
+    </section>
+
+
+    <div id="editTeacherForm" style="display: none;">
+        <h3>Update Teacher</h3>
+        <input type="text" id="editName" placeholder="New Name" />
+        <input type="email" id="editEmail" placeholder="New Email" /> 
+        <input type="text" id="editDept" placeholder="New Department" />
+        <input type="text" id="editSubject" placeholder="New Subject" />
+        <button id="saveEdit">Save Changes</button>
+        <button id="cancelEdit">Cancel</button>
+      </div>      
+    </section>
+    <script type="module" src="/admin/admin.js"></script>
+</body>
+
+</html>

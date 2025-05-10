@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="./admin.css">
+</head>
+<body>
+  <header>
+    <h2>Admin Dashboard</h2>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <div class="cards-container">
+    <div class="card" onclick="location.href='addteacher.html'">
+      <img src="https://img.icons8.com/fluency/48/add-user-male.png" alt="Add Teacher" />
+      <p>Add Teacher</p>
+    </div>
+
+    <div class="card" onclick="location.href='studentapproval.html'">
+      <img src="https://img.icons8.com/fluency/48/approval.png" alt="Student Approval" />
+      <p>Student Approval</p>
+    </div>
+
+    <div class="card" onclick="location.href='teacherlist.html'">
+      <img src="https://img.icons8.com/fluency/48/list.png" alt="Teacher List" />
+      <p>Teacher List</p>
+    </div>
+  </div>
+
+  <script type="module">
+    // Note the '..' to go up out of /admin/ into /js/
+    import { auth } from '../js/firebase-config.js';
+    import { signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      // redirect back up to the root login page
+      window.location.href = '../login.html';
+    });
+  </script>
+</body>
+</html>

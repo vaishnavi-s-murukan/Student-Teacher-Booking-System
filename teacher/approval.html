@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Approval</title>
+  <link rel="stylesheet" href="teacher.css" />
+</head>
+<body>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin: 40px 20px 40px 50px;">
+    <h2 style="margin: 0;">Student Approvals</h2>
+    <a href="/teacher/teacher.html"
+      style="background: #007bff; color: white; padding: 8px 12px; border-radius: 5px; text-decoration: none;">← Back
+      to Dashboard</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Message</th>
+        <th>Appointment Date</th>
+        <th>Time</th>
+        <th>Action</th>
+      </tr>
+    </thead>    
+    <tbody id="approvalList"></tbody>
+  </table>
+
+  <script type="module">
+    import { db } from '../js/firebase-config.js';
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  where,
+  addDoc,
+  getDoc
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { onAuthStateChanged, getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const auth = getAuth();
+const approvalList = document.getElementById("approvalList");
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loadApprovals(user.uid);
+  } else {
+    approvalList.innerHTML = "<tr><td colspan='6'>Please login</td></tr>";
+  }
+});
+
+async function loadApprovals(teacherId) {
+  approvalList.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+
+  try {
+    const q = query(
+      collection(db, "appointments"),
+      where("status", "==", "pending"),
+      where("teacherId", "==", teacherId)
+    );
+    const snapshot = await getDocs(q);
+    approvalList.innerHTML = "";
+
+    if (snapshot.empty) {
+      approvalList.innerHTML = "<tr><td colspan='6'>No pending approvals</td></tr>";
+      return;
+    }
+
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${data.studentName}</td>
+        <td>${data.studentEmail}</td>
+        <td>${data.message || "–"}</td>
+        <td>${formatDate(data.appointmentTime)}</td>
+        <td>${formatTime(data.appointmentTime)}</td>
+        <td>
+          <button class="approve-btn" data-id="${docSnap.id}">Approve</button>
+          <button class="reject-btn" data-id="${docSnap.id}">Reject</button>
+        </td>
+      `;
+
+      approvalList.appendChild(row);
+    });
+  } catch (err) {
+    console.error("Error fetching approvals:", err);
+    approvalList.innerHTML = "<tr><td colspan='6'>Error loading data</td></tr>";
+  }
+}
+
+document.addEventListener("click", async (e) => {
+  const isApprove = e.target.classList.contains("approve-btn");
+  const isReject = e.target.classList.contains("reject-btn");
+
+  if (!isApprove && !isReject) return;
+
+  const id = e.target.dataset.id;
+  const status = isApprove ? "approved" : "rejected";
+
+  try {
+    const docRef = doc(db, "appointments", id);
+    await updateDoc(docRef, { status });
+    alert(`Appointment ${status}`);
+    const user = auth.currentUser;
+    if (user) {
+      loadApprovals(user.uid);
+    }
+  } catch (err) {
+    console.error("Error updating status:", err);
+    alert("Failed to update status");
+  }
+  // Send notification to student
+const docRef = doc(db, "appointments", id);
+const appointmentDoc = await getDoc(docRef);
+const appointmentData = appointmentDoc.data();
+
+await addDoc(collection(db, "notifications"), {
+  to: appointmentData.studentEmail,
+  message: `Your appointment has been ${status} by ${auth.currentUser.email}.`,
+  timestamp: new Date(), // ✅ Important for orderBy
+  read: false
+});
+  
+    alert(`Notification sent to ${appointmentData.studentEmail}`);
+});
+
+function formatDate(appointmentTime) {
+  const [date] = appointmentTime.split(' ');
+  return date;
+}
+
+function formatTime(appointmentTime) {
+  const parts = appointmentTime.split(' ');
+  const start = parts[1];
+  const end = parts[3];
+  return `${to12Hour(start)} - ${to12Hour(end)}`;
+}
+
+function to12Hour(timeStr) {
+  const [h, m] = timeStr.split(':');
+  const hour = parseInt(h);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${m} ${ampm}`;
+}
+
+ </script>
+</body>
+</html>

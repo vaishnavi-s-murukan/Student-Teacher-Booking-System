@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Dashboard</title>
+  <link rel="stylesheet" href="teacher.css" />
+</head>
+<body>
+  <div class="dashboard-header">
+    <h1>Teacher Dashboard</h1>
+  
+    <div class="profile-section">
+      <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png" alt="Profile" id="profileToggle" class="profile-img" />
+      <div id="dropdownMenu" class="dropdown-menu">
+        <p id="teacherName">Loading...</p>
+        <p id="teacherEmail">Loading...</p>
+        <hr />
+        <a href="edit-password.html">Edit Password</a>
+        <button id="logoutBtn">Logout</button>
+      </div>
+    </div>
+  </div>  
+
+  <div class="dashboard-container">
+    <div class="card-grid">
+      <a class="card" href="schedule.html">📅 Schedule Appointment</a>
+      <a class="card" href="approval.html">✅ Approve/Cancel Appointment</a>
+      <a class="card" href="messages.html">💬 View Messages</a>
+      <a class="card" href="all-appointments.html">📋 View All Appointments</a>
+    </div>
+  </div>
+
+  <script type="module" src="/teacher/teacher.js"></script>
+</body>
+</html>

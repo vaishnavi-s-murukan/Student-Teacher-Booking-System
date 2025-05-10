@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking History</title>
+  <link rel="stylesheet" href="student.css" />
+  <style>
+    .history-container {
+      padding: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f3f4f6;
+    }
+
+    .status {
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .status.approved {
+      color: white;
+      background-color: green;
+    }
+
+    .status.pending {
+      color: white;
+      background-color: orange;
+    }
+
+    .status.rejected {
+      color: white;
+      background-color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="history-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 40px 20px 40px 50px;">
+      <h2 style="margin: 0;">📋 Booking History</h2>
+      <a href="/student/student.html"
+        style="background: #007bff; color: white; padding: 8px 12px; border-radius: 5px; text-decoration: none;">← Back
+        to Dashboard</a>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Teacher Name</th>
+          <th>Email</th>
+          <th>Subject</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Message</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="historyTableBody">
+        <!-- Booking rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script type="module">
+    import { auth, db } from '../js/firebase-config.js';
+import { collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const historyTableBody = document.getElementById("historyTableBody");
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    alert("Please log in to view your booking history.");
+    console.warn("User not logged in.");
+    return;
+  }
+
+  try {
+    const bookingsRef = collection(db, "appointments");
+    const q = query(bookingsRef, where("studentEmail", "==", user.email));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      console.log("No bookings found for this student.");
+      historyTableBody.innerHTML = `<tr><td colspan="7">No bookings found.</td></tr>`;
+      return;
+    }
+
+    const bookings = [];
+
+    for (const docSnap of querySnapshot.docs) {
+      const data = docSnap.data();
+
+      const teacherRef = doc(db, "teachers", data.teacherId);
+      const teacherDoc = await getDoc(teacherRef);
+
+      let teacherData = {};
+      if (teacherDoc.exists()) {
+        teacherData = teacherDoc.data();
+      } else {
+        console.warn("Teacher document not found:", data.teacherId);
+      }
+
+      bookings.push({ ...data, teacherData });
+    }
+
+    // Sort bookings by appointment date
+    bookings.sort((a, b) => {
+      const dateA = new Date(a.appointmentTime?.split(" ")[0]);
+      const dateB = new Date(b.appointmentTime?.split(" ")[0]);
+      return dateA - dateB;
+    });
+
+    // Function to convert time to 12-hour format
+    function to12Hour(timeStr) {
+      const [hour, minute] = timeStr.split(":");
+      const date = new Date();
+      date.setHours(+hour, +minute);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+
+    bookings.forEach((data) => {
+      const { teacherData } = data;
+      const [dateStr, from, dash, to] = data.appointmentTime?.split(" ") || ["N/A", "N/A", "-", "N/A"];
+      const fromFormatted = to12Hour(from);
+      const toFormatted = to12Hour(to);
+      const timeFormatted = `${fromFormatted} - ${toFormatted}`;
+      const status = data.status?.toLowerCase() || "pending";
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${teacherData.name || "N/A"}</td>
+        <td>${teacherData.email || "N/A"}</td>
+        <td>${teacherData.subject || "N/A"}</td>
+        <td>${dateStr}</td>
+        <td>${timeFormatted}</td>
+        <td>${data.message || ""}</td>
+        <td><span class="status ${status}">${data.status || "Pending"}</span></td>
+      `;
+      historyTableBody.appendChild(row);
+    });
+
+  } catch (error) {
+    console.error("Error loading booking history:", error);
+    historyTableBody.innerHTML = `<tr><td colspan="7">Error loading history.</td></tr>`;
+  }
+});
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+  <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 20px;">
+    <button onclick="window.location.href='admin.html'"
+      style="background-color: #6c63ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+      Back to Dashboard
+    </button>
+    <button id="logoutBtn">Logout</button>
+  </div>
+  <!-- Centered Add Teacher Box -->
+  <div class="add-container">
+    <section class="add-box">
+      <h2>Add Teacher</h2>
+      <form id="addTeacherForm">
+        <input type="text" id="tName" placeholder="Name" required />
+        <input type="email" id="tEmail" placeholder="Email" required />
+        <input type="text" id="tDept" placeholder="Department" required />
+        <input type="text" id="tSubject" placeholder="Subject" required />
+        <button type="submit">Add Teacher</button>
+      </form>      
+    </section>
+  </div>
+
+  <script type="module" src="/admin/admin.js"></script>
+</body>
+
+</html>

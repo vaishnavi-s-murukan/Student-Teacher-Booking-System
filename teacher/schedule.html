@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Schedule</title>
+  <link rel="stylesheet" href="teacher.css" />
+</head>
+<body>
+  <main>
+<!-- Title and Back Button in One Line -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2 style="margin: 0;">My Schedule</h2>
+  <a href="teacher.html" style="background: #007bff; color: white; padding: 8px 12px; border-radius: 5px; text-decoration: none;">← Back to Dashboard</a>
+</div>
+
+
+    <!-- Add Slot Form -->
+    <form id="scheduleForm" class="schedule-form">
+      <label for="date">Date:</label>
+      <input type="date" id="date" name="date" required />
+    
+      <label for="from">From:</label>
+      <input type="time" id="from" name="from" required />
+    
+      <label for="to">To:</label>
+      <input type="time" id="to" name="to" required />
+    
+      <label for="note">Note (optional):</label>
+      <input type="text" id="note" name="note" />
+    
+      <button type="submit">Add Slot</button>
+    </form>
+    
+
+    <!-- Slots Table -->
+    <h2>Available Slots</h2>
+    <table id="slotTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Note</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="slotsTableBody"></tbody>
+    </table>
+
+    <!-- Edit Slot Modal -->
+    <div id="editSlotModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h3>Edit Slot</h3>
+        <label for="editSlotDate">Date:</label>
+        <input type="date" id="editSlotDate" />
+
+        <label for="editSlotFrom">From:</label>
+        <input type="time" id="editSlotFrom" />
+
+        <label for="editSlotTo">To:</label>
+        <input type="time" id="editSlotTo" />
+
+        <label for="editSlotNote">Note (optional):</label>
+        <input type="text" id="editSlotNote" placeholder="Optional" />
+
+        <div class="modal-actions">
+          <button id="saveSlotEdit">Save Changes</button>
+          <button id="cancelSlotEdit">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/teacher/teacher.js"></script>
+</body>
+</html>
